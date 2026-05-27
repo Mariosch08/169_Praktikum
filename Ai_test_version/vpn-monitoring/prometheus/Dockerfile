@@ -2,7 +2,7 @@
 # Basis: offizielles Prometheus Image
 FROM prom/prometheus:latest
 
-LABEL maintainer="YOUR_TEAM_NAME"
+LABEL maintainer="M169_praktikum"
 LABEL description="Prometheus Monitoring fuer WireGuard VPN – M169 Praktikum"
 LABEL version="1.0"
 

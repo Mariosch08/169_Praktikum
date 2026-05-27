@@ -3,7 +3,7 @@
 FROM lscr.io/linuxserver/wireguard:latest
 
 # Metadaten
-LABEL maintainer="YOUR_TEAM_NAME"
+LABEL maintainer="M169_praktikum"
 LABEL description="WireGuard VPN Server fuer das M169 Praktikum"
 LABEL version="1.0"
 
