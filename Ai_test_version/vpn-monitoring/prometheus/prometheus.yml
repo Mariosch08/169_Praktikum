@@ -1,0 +1,26 @@
+global:
+  scrape_interval: 15s       # Metriken alle 15 Sekunden abrufen
+  evaluation_interval: 15s   # Alerting-Regeln alle 15 Sekunden auswerten
+
+# ──────────────────────────────────────────
+# Scrape-Konfigurationen
+# Prometheus ruft Metriken von diesen Quellen ab
+# ──────────────────────────────────────────
+scrape_configs:
+
+  # Prometheus selbst ueberwachen
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Node Exporter: Systemmetriken (CPU, RAM, Netzwerk, Disk)
+  # node_network_receive_bytes_total  → Datendurchsatz eingehend
+  # node_network_transmit_bytes_total → Datendurchsatz ausgehend
+  # Wichtig: wg0-Interface zeigt den VPN-Durchsatz
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'dietpi-host'

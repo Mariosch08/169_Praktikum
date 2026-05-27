@@ -1,0 +1,88 @@
+services:
+
+  # ─────────────────────────────────────────
+  # Service 1: WireGuard VPN
+  # ─────────────────────────────────────────
+  wireguard:
+    build: ./wireguard
+    image: YOUR_DOCKERHUB_USERNAME/wireguard:latest
+    container_name: wireguard
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Zurich
+      - SERVERURL=auto        # automatisch externe IP erkennen
+      - SERVERPORT=51820
+      - PEERS=3               # Anzahl Client-Configs die generiert werden
+      - PEERDNS=auto
+      - INTERNAL_SUBNET=10.13.13.0
+      - LOG_CONFS=true
+    volumes:
+      - ./wireguard/config:/config
+      - /lib/modules:/lib/modules:ro
+    ports:
+      - "51820:51820/udp"
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    restart: unless-stopped
+    networks:
+      - vpn-net
+
+  # ─────────────────────────────────────────
+  # Service 2a: Node Exporter (Metriken-Quelle)
+  # Misst Netzwerkdurchsatz auf dem wg0-Interface
+  # ─────────────────────────────────────────
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    ports:
+      - "9100:9100"
+    restart: unless-stopped
+    networks:
+      - vpn-net
+
+  # ─────────────────────────────────────────
+  # Service 2b: Prometheus (Metriken sammeln)
+  # ─────────────────────────────────────────
+  prometheus:
+    build: ./prometheus
+    image: YOUR_DOCKERHUB_USERNAME/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    restart: unless-stopped
+    networks:
+      - vpn-net
+
+  # ─────────────────────────────────────────
+  # Service 2c: Grafana (Metriken visualisieren)
+  # ─────────────────────────────────────────
+  grafana:
+    build: ./grafana
+    image: YOUR_DOCKERHUB_USERNAME/grafana:latest
+    container_name: grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+      - GF_USERS_ALLOW_SIGN_UP=false
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    networks:
+      - vpn-net
+
+networks:
+  vpn-net:
+    driver: bridge
