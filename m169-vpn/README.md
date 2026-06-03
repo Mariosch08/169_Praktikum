@@ -43,7 +43,7 @@ docker compose down
 
 ### Grafana Dashboard
 
-Grafana im Browser öffnen: `http://<DietPi-IP>:3000`  
+Grafana im Browser öffnen: `http://localhost:3000`  
 Login: `admin` / `admin123`
 
 Empfohlenes Dashboard importieren: **Node Exporter Full** (ID: `1860`)  
