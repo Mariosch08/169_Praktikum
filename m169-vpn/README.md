@@ -24,9 +24,9 @@ vpn-monitoring/
 
 
 
-**### 1. Stack starten**
+### 1. Stack starten
 
-``
+
 ```bash
 docker compose up -d
 ```
