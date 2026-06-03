@@ -5,7 +5,7 @@ services:
   # ─────────────────────────────────────────
   wireguard:
     build: ./wireguard
-    image: YOUR_DOCKERHUB_USERNAME/wireguard:latest
+    image: mariors08/wireguard:latest
     container_name: wireguard
     cap_add:
       - NET_ADMIN
@@ -58,7 +58,7 @@ services:
   # ─────────────────────────────────────────
   prometheus:
     build: ./prometheus
-    image: YOUR_DOCKERHUB_USERNAME/prometheus:latest
+    image: mariors08/prometheus:latest
     container_name: prometheus
     ports:
       - "9090:9090"
@@ -71,7 +71,7 @@ services:
   # ─────────────────────────────────────────
   grafana:
     build: ./grafana
-    image: YOUR_DOCKERHUB_USERNAME/grafana:latest
+    image: mariors08/grafana:latest
     container_name: grafana
     environment:
       - GF_SECURITY_ADMIN_USER=admin
